@@ -18,7 +18,8 @@ def draw():
             bullet.draw()
         for fruit in fruits:
             fruit.draw()
-        screen.draw.text("Score : "+str(score),topleft=(10,10),fontsize=30,color='white')
+        screen.draw.text("Score : "+str(score),topleft=(10,10),fontsize=30,color='white')  
+        screen.draw.text("<- don't touch",topleft=(90,50),fontsize=30,color='white')
         screen.draw.text("Time : "+str(Time),topleft=(500,10),fontsize=30,color='white')
         screen.draw.text("Bullet :"+str(len(bullets)),topleft=(10,600),fontsize=28,color='white')
     elif StatusGame == 2:
@@ -97,11 +98,8 @@ def update():
     if StatusGame == 1:
         for n in range(MaxFruits):
             fruits[n].top += speeds[n]
-            fruits[n].right += speeds[n]
             if(fruits[n].top > HEIGHT+100):
                 fruits[n].bottom = -100
-            if(fruits[n].right > WIDTH+100):
-                fruits[n].left = -100
     #collision alien
     for bullet in bullets:
         if bullet.colliderect(alien):
@@ -151,13 +149,14 @@ def update():
                     score += 1
         if StatusGame == 1:
             for fruit in fruits:
-                if fruit.colliderect(ship):
-                    score -= 10
-                    fruits.remove(fruit)
-                    a = randint(0,2)
-                    fruits.append(Actor('apple'))
-                    speeds.append(randint(1,4))
-                    fruits[2].pos = POS[a]
+                if fruit.y < HEIGHT-100:
+                     if fruit.colliderect(ship):
+                        score -= 10
+                        fruits.remove(fruit)
+                        a = randint(0,2)
+                        fruits.append(Actor('apple'))
+                        speeds.append(randint(1,4))
+                        fruits[2].pos = POS[a]
     
 def start_game():
     global StatusGame,Time,score,MaxFruits,fruits,speed
@@ -166,11 +165,16 @@ def start_game():
     Time = 60
     score = 0
     MaxFruits = 3
+    Minialien.pos = (400,125)
+    alien.pos = (4000,1250)
     for n in range(MaxFruits) :
         fruits.append(Actor('apple'))
-        speeds.append(randint(1,4))
-        fruits[n].pos = POS[n]
-    
+        speeds.append(randint(2,4))
+        fruits[n].pos = (0,0)
+    for n in range(MaxFruits) :
+        fruits.append(Actor('apple'))
+        speeds.append(randint(2,4))
+        fruits[n].pos = POS[n]  
     clock.schedule_interval(time_count,1)
     clock.schedule(time_out,MaxTime)
 
@@ -182,6 +186,8 @@ def time_count():
 def time_out():
     global StatusGame
     StatusGame = 2
+    Minialien.pos = (4000,1250)
+    alien.pos = (4000,1250)
     clock.unschedule(time_count)
     
 #main
